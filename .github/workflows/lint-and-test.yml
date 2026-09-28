@@ -1,0 +1,131 @@
+name: Lint, Type-Check, and Test CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "ui/**"
+      - "config/**"
+      - "requirements*.txt"
+      - "pyproject.toml"
+      - ".github/workflows/lint-and-test.yml"
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "ui/**"
+      - "config/**"
+      - "requirements*.txt"
+      - "pyproject.toml"
+      - ".github/workflows/lint-and-test.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-format:
+    name: Code Quality & Static Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Linting Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff black flake8
+
+      - name: Run Ruff (Linter & Rule Enforcement)
+        run: |
+          ruff check . --output-format=github
+
+      - name: Run Black (Formatting Check)
+        run: |
+          black --check --diff .
+
+  type-check:
+    name: MyPy Type Safety
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies & MyPy
+        run: |
+          python -m pip install --upgrade pip
+          pip install mypy types-PyYAML types-requests
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run MyPy Static Verification
+        run: |
+          mypy src/ --ignore-missing-imports --explicit-package-bases
+
+  unit-and-integration-tests:
+    name: Pytest Suite (Python ${{ matrix.python-version }})
+    needs: [lint-and-format, type-check]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install System Dependencies (Libmagic / Parser tools)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libmagic1 iverilog
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pytest-mock pytest-asyncio
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Execute Tests with Coverage
+        env:
+          GROQ_API_KEY: "mock_test_key_ci"
+          CHROMA_PERSIST_DIR: "./.test_chroma"
+        run: |
+          pytest tests/ \
+            --cov=src \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            -v
+
+      - name: Upload Test Coverage Artifact
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: coverage.xml
+          retention-days: 14
