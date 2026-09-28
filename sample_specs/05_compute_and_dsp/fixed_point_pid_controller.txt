@@ -1,0 +1,41 @@
+================================================================================
+SPECIFICATION: Fixed-Point DSP PID Controller (dsp_pid_core)
+Revision: 2.0 | Format: Q16.16 Signed Fixed-Point | Domain: Digital Control / DSP
+================================================================================
+
+1. MODULE OVERVIEW
+A pipelined proportional-integral-derivative (PID) hardware feedback controller. 
+Computes the standard equation:
+    $u[k] = K_p \cdot e[k] + K_i \cdot \sum e[k] + K_d \cdot (e[k] - e[k-1])$
+using single-cycle DSP multiply-accumulate primitives with anti-windup clamping 
+and symmetric saturation arithmetic.
+
+2. PORTS & INTERFACES
+Port Name       | Dir | Width  | Clock  | Polarity | Description
+----------------|-----|--------|--------|----------|-----------------------------------------
+clk             | in  | [0:0]  | clk    | edge     | Core DSP clock (up to 200MHz)
+rst_n           | in  | [0:0]  | clk    | low      | Active-low synchronous reset
+sample_trig     | in  | [0:0]  | clk    | high     | Periodic sample trigger strobe
+setpoint        | in  | [31:0] | clk    | high     | Desired target reference (Q16.16 signed)
+feedback        | in  | [31:0] | clk    | high     | Plant sensor feedback value (Q16.16 signed)
+kp_gain         | in  | [31:0] | clk    | high     | Proportional coefficient Kp (Q16.16)
+ki_gain         | in  | [31:0] | clk    | high     | Integral coefficient Ki (Q16.16)
+kd_gain         | in  | [31:0] | clk    | high     | Derivative coefficient Kd (Q16.16)
+output_cmd      | out | [31:0] | clk    | high     | Actuator drive command u[k] (Q16.16 signed)
+output_valid    | out | [0:0]  | clk    | high     | 1-cycle strobe indicating output_cmd is valid
+clamped_flag    | out | [0:0]  | clk    | high     | Saturated due to anti-windup bounds
+
+3. MATHEMATICAL & PIPELINE CONSTRAINTS
+- Pipeline Latency : Exactly 3 clock cycles from sample_trig assertion to output_valid.
+- Saturation Limits: Upper Bound = +32767.9999 (0x7FFF_FFFF), Lower Bound = -32768.0000 (0x8000_0000).
+- Anti-Windup Clamping: The accumulator freezing logic stops integrating error when output_cmd hits limits.
+
+4. CORNER CASES
+CC-01: Integral Windup Saturation
+       Continuous large error $e[k]$ causes accumulator to overflow 32 bits. 
+       Anti-windup logic must freeze integration and assert `clamped_flag`.
+CC-02: Sign-Bit Inversion Overflow
+       Adding two large positive fixed-point numbers resulting in a negative number must 
+       saturate cleanly at 0x7FFFFFFF rather than wrapping around (2's complement rollover).
+CC-03: Derivative Kick on Setpoint Jump
+       Step change in setpoint must not cause infinite spike in derivative term.
