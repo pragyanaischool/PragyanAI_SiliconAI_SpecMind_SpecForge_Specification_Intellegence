@@ -1,0 +1,63 @@
+================================================================================
+SPECIFICATION: AXI4-Stream Synchronous FIFO (axis_sync_fifo)
+Revision: 1.4 | Target Tech: ASIC / UltraScale+ | Domain: Streaming Buffers
+================================================================================
+
+1. MODULE OVERVIEW
+The axis_sync_fifo provides elastic buffering for high-throughput AXI4-Stream 
+data pipelines. It operates on a single synchronous clock domain, implements 
+First-Word Fall-Through (FWFT) mode, and asserts configurable programmable full 
+and empty watermark flags.
+
+2. PARAMETERS
+- DATA_WIDTH        : Integer, Default = 32 (Valid: 8, 16, 32, 64, 128)
+- FIFO_DEPTH        : Integer, Default = 64 (Must be a power of 2, minimum 8)
+- PROG_FULL_THRESH  : Integer, Default = 60 (Asserts prog_full when count >= thresh)
+- PROG_EMPTY_THRESH : Integer, Default = 4  (Asserts prog_empty when count <= thresh)
+
+3. INTERFACE SIGNALS
+Port Name       | Dir | Width            | Clock  | Polarity | Description
+----------------|-----|------------------|--------|----------|-----------------------------------------
+aclk            | in  | [0:0]            | aclk   | edge     | Primary synchronous clock (up to 300MHz)
+aresetn         | in  | [0:0]            | aclk   | low      | Active-low synchronous reset
+s_axis_tdata    | in  | [DATA_WIDTH-1:0] | aclk   | high     | Inbound stream data payload
+s_axis_tvalid   | in  | [0:0]            | aclk   | high     | Inbound stream data valid
+s_axis_tready   | out | [0:0]            | aclk   | high     | Ready for write (deasserted when FULL)
+s_axis_tlast    | in  | [0:0]            | aclk   | high     | Inbound packet boundary marker
+m_axis_tdata    | out | [DATA_WIDTH-1:0] | aclk   | high     | Outbound stream data payload
+m_axis_tvalid   | out | [0:0]            | aclk   | high     | Outbound data valid (driven when non-empty)
+m_axis_tready   | in  | [0:0]            | aclk   | high     | Downstream receiver ready
+m_axis_tlast    | out | [0:0]            | aclk   | high     | Outbound packet boundary marker
+prog_full       | out | [0:0]            | aclk   | high     | Watermark flag: count >= PROG_FULL_THRESH
+prog_empty      | out | [0:0]            | aclk   | high     | Watermark flag: count <= PROG_EMPTY_THRESH
+overflow_err    | out | [0:0]            | aclk   | high     | Sticky flag asserted if write attempted while full
+underflow_err   | out | [0:0]            | aclk   | high     | Sticky flag asserted if read attempted while empty
+
+4. TIMING & PROTOCOL CONSTRAINTS
+- Target Frequency : 250 MHz (4.0 ns period).
+- Latency (FWFT)   : 0 clock cycles when empty; inbound data directly presents at output.
+- Latency (Normal) : 1 clock cycle from s_axis_tvalid handshake to m_axis_tdata valid.
+- Protocol Rule    : s_axis_tready must NOT depend combinatorially on m_axis_tready.
+
+5. FINITE STATE MACHINE (FWFT Output Buffer)
+States:
+- ST_EMPTY   : FIFO buffer has 0 words. m_axis_tvalid = 0.
+- ST_FILLING : Data available in internal RAM, loading output register.
+- ST_VALID   : Output register holds valid word. m_axis_tvalid = 1.
+Transitions:
+- ST_EMPTY   -> ST_VALID   when (s_axis_tvalid == 1 && s_axis_tready == 1)
+- ST_VALID   -> ST_EMPTY   when (m_axis_tready == 1 && internal_count == 1)
+- ST_VALID   -> ST_VALID   when (m_axis_tready == 1 && internal_count > 1)
+
+6. CRITICAL CORNER CASES & HAZARDS
+CC-01: Simultaneous Read and Write at Full-1
+       When occupancy = FIFO_DEPTH - 1 and both s_axis_tvalid & m_axis_tready are 1.
+       Occupancy counter must remain constant. s_axis_tready must remain high.
+CC-02: Simultaneous Read and Write when Empty
+       When occupancy = 0, both valid and ready asserted.
+       Word must pass straight through to output register without pointer desynchronization.
+CC-03: Downstream Stall (Backpressure)
+       m_axis_tready deasserts mid-burst. m_axis_tdata must remain stable.
+CC-04: Reset During Active Burst
+       aresetn asserts low while s_axis_tvalid is high. All ready/valid signals must 
+       immediately deassert to avoid corrupt data capture.
