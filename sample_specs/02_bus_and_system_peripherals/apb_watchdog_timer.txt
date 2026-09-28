@@ -1,0 +1,50 @@
+================================================================================
+SPECIFICATION: APB4 Programmable Watchdog Timer (apb_wdt)
+Revision: 1.0 | Bus Protocol: AMBA APB v2.0 / APB4 | Domain: System Safety
+================================================================================
+
+1. MODULE OVERVIEW
+A 32-bit decrementing hardware watchdog timer accessible via an APB4 slave 
+interface. Includes a software lock register to protect against errant pointer writes, 
+a pre-scaled down-counter, and dual-action output: first an interrupt, then a system reset.
+
+2. APB4 REGISTER MAP
+Offset | Name        | Access | Width | Description
+-------|-------------|--------|-------|------------------------------------------------
+0x00   | WDT_CTRL    | R/W    | 32    | Bit 0: Enable, Bit 1: Int Enable, Bit 2: Reset Enable
+0x04   | WDT_LOAD    | R/W    | 32    | Reload value for the 32-bit counter
+0x08   | WDT_VALUE   | RO     | 32    | Current live counter decrement value
+0x0C   | WDT_UNLOCK  | WO     | 32    | Write 0x1ACCE551 to unlock; any other value locks
+0x10   | WDT_STATUS  | R/W1C  | 32    | Bit 0: Timeout Interrupt Flag (Write 1 to clear)
+
+3. INTERFACE SIGNALS
+Port Name       | Dir | Width  | Clock   | Polarity | Description
+----------------|-----|--------|---------|----------|-----------------------------------------
+pclk            | in  | [0:0]  | pclk    | edge     | APB bus clock (50-100MHz)
+presetn         | in  | [0:0]  | pclk    | low      | APB active-low system reset
+psel            | in  | [0:0]  | pclk    | high     | APB peripheral select
+penable         | in  | [0:0]  | pclk    | high     | APB strobe / enable phase
+pwrite          | in  | [0:0]  | pclk    | high     | 1 = Write transaction, 0 = Read
+paddr           | in  | [11:0] | pclk    | high     | APB byte address
+pwdata          | in  | [31:0] | pclk    | high     | APB write data bus
+pready          | out | [0:0]  | pclk    | high     | APB transfer completion flag (always 1)
+prdata          | out | [31:0] | pclk    | high     | APB read data bus
+pslverr         | out | [0:0]  | pclk    | high     | Slave error (unmapped address or locked write)
+wdt_irq         | out | [0:0]  | pclk    | high     | Watchdog pre-timeout interrupt request
+wdt_rst_out     | out | [0:0]  | pclk    | high     | Watchdog terminal timeout reset pulse
+
+4. BEHAVIOR & TIMING
+- Write attempts to WDT_CTRL or WDT_LOAD while unlocked (WDT_UNLOCK != 0x1ACCE551) 
+  must assert `pslverr` and drop the write.
+- Counter reaches 0x00000000: wdt_irq asserts. If unserviced for 256 further cycles, 
+  wdt_rst_out pulses high for 16 clock cycles.
+
+5. CORNER CASES
+CC-01: Malicious Write During Locked State
+       Software writes directly to WDT_LOAD without sending 0x1ACCE551 to WDT_UNLOCK.
+       Hardware must return `pslverr = 1` and preserve counter state.
+CC-02: Simultaneous Service and Zero-Crossing
+       Software writes to WDT_LOAD in the exact clock cycle the counter hits 0.
+       WDT_LOAD value takes precedence; interrupt assertion must be suppressed.
+CC-03: Address Unaligned / Out of Range
+       paddr accesses outside registered offsets (e.g. 0x01, 0x14). Must assert pslverr.
