@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070B12"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F2FE"/>
+      <stop offset="100%" stop-color="#4FACFE"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#00F2FE"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="680" rx="16" fill="url(#bgGrad)" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="600" y="48" fill="#00F2FE" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="700" text-anchor="middle" letter-spacing="2">
+    PRAGYANAI-SPECFORGE: MULTI-AGENT STATE GRAPH
+  </text>
+  <text x="600" y="74" fill="#64748B" font-family="'JetBrains Mono', monospace" font-size="12" text-anchor="middle">
+    Deterministic Specification Ingestion, Contract Synthesis &amp; Verification Planning
+  </text>
+
+  <!-- Phase 1: Spec Intelligence -->
+  <g transform="translate(60, 120)">
+    <rect width="240" height="480" rx="12" fill="url(#cardGrad)" stroke="#38BDF8" stroke-width="1.5"/>
+    <rect width="240" height="38" rx="12" fill="#0284C7" fill-opacity="0.2"/>
+    <text x="120" y="24" fill="#38BDF8" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" text-anchor="middle">1. SPEC INTELLIGENCE</text>
+    
+    <!-- Nodes -->
+    <rect x="20" y="60" width="200" height="48" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="120" y="88" fill="#E2E8F0" font-family="monospace" font-size="11" text-anchor="middle">Document Parser (PDF/DOCX)</text>
+
+    <rect x="20" y="125" width="200" height="48" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="120" y="153" fill="#E2E8F0" font-family="monospace" font-size="11" text-anchor="middle">Interface &amp; Port Miner</text>
+
+    <rect x="20" y="190" width="200" height="48" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="120" y="218" fill="#E2E8F0" font-family="monospace" font-size="11" text-anchor="middle">Timing &amp; CDC Analyst</text>
+
+    <rect x="20" y="255" width="200" height="48" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="120" y="283" fill="#E2E8F0" font-family="monospace" font-size="11" text-anchor="middle">FSM &amp; State Miner</text>
+
+    <rect x="20" y="320" width="200" height="48" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="120" y="348" fill="#E2E8F0" font-family="monospace" font-size="11" text-anchor="middle">Corner-Case Discovery</text>
+
+    <rect x="20" y="395" width="200" height="58" rx="8" fill="#0C4A6E" stroke="#0284C7"/>
+    <text x="120" y="420" fill="#38BDF8" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">ChromaDB Store</text>
+    <text x="120" y="438" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">Table-Preserved Vector Index</text>
+  </g>
+
+  <!-- Flow 1 -> 2 -->
+  <path d="M 300 360 L 360 360" stroke="#00F2FE" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Phase 2: Design Contract -->
+  <g transform="translate(360, 120)">
+    <rect width="220" height="480" rx="12" fill="url(#cardGrad)" stroke="#00F2FE" stroke-width="2" filter="url(#glow)"/>
+    <rect width="220" height="38" rx="12" fill="#00F2FE" fill-opacity="0.15"/>
+    <text x="110" y="24" fill="#00F2FE" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" text-anchor="middle">2. DESIGN CONTRACT</text>
+
+    <rect x="15" y="60" width="190" height="60" rx="8" fill="#0F172A" stroke="#334155"/>
+    <text x="105" y="86" fill="#38BDF8" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Pydantic V2 Schema</text>
+    <text x="105" y="104" fill="#94A3B8" font-family="monospace" font-size="10" text-anchor="middle">HardwareSpecification</text>
+
+    <rect x="15" y="140" width="190" height="40" rx="6" fill="#070B12" stroke="#1E293B"/>
+    <text x="105" y="165" fill="#E2E8F0" font-family="monospace" font-size="10" text-anchor="middle">Port Definitions [W:D:Pol]</text>
+
+    <rect x="15" y="195" width="190" height="40" rx="6" fill="#070B12" stroke="#1E293B"/>
+    <text x="105" y="220" fill="#E2E8F0" font-family="monospace" font-size="10" text-anchor="middle">Timing &amp; Clock Domains</text>
+
+    <rect x="15" y="250" width="190" height="40" rx="6" fill="#070B12" stroke="#1E293B"/>
+    <text x="105" y="275" fill="#E2E8F0" font-family="monospace" font-size="10" text-anchor="middle">FSM State Transitions</text>
+
+    <rect x="15" y="305" width="190" height="40" rx="6" fill="#070B12" stroke="#1E293B"/>
+    <text x="105" y="330" fill="#E2E8F0" font-family="monospace" font-size="10" text-anchor="middle">Traceability Matrix (RTM)</text>
+
+    <rect x="15" y="380" width="190" height="75" rx="8" fill="#132E35" stroke="#00F2FE"/>
+    <text x="105" y="405" fill="#00F2FE" font-family="monospace" font-size="10" font-weight="700" text-anchor="middle">Synthesizer Reconciler</text>
+    <text x="105" y="425" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">Resolves Discrepancies</text>
+    <text x="105" y="440" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">and Polarity Clashes</text>
+  </g>
+
+  <!-- Flow 2 -> 3 -->
+  <path d="M 580 360 L 640 360" stroke="#00F2FE" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Phase 3: Verification Intelligence -->
+  <g transform="translate(640, 120)">
+    <rect width="240" height="480" rx="12" fill="url(#cardGrad)" stroke="#A855F7" stroke-width="1.5"/>
+    <rect width="240" height="38" rx="12" fill="#7E22CE" fill-opacity="0.2"/>
+    <text x="120" y="24" fill="#C084FC" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" text-anchor="middle">3. VERIFICATION INTEL</text>
+
+    <rect x="20" y="70" width="200" height="65" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="120" y="98" fill="#E2E8F0" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">SVA Synthesizer</text>
+    <text x="120" y="118" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">Concurrent Assertions Module</text>
+
+    <rect x="20" y="160" width="200" height="65" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="120" y="188" fill="#E2E8F0" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Testcase Planner</text>
+    <text x="120" y="208" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">Directed &amp; Randomized Stimuli</text>
+
+    <rect x="20" y="250" width="200" height="65" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="120" y="278" fill="#E2E8F0" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Boundary Conditions</text>
+    <text x="120" y="298" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">FIFO Wrap, Bursts, Deadlocks</text>
+
+    <rect x="20" y="340" width="200" height="65" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="120" y="368" fill="#E2E8F0" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Coverage Advisor</text>
+    <text x="120" y="388" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">SystemVerilog Covergroups</text>
+  </g>
+
+  <!-- Flow 3 -> 4 -->
+  <path d="M 880 360 L 930 360" stroke="#00F2FE" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Phase 4: Copilot & HITL -->
+  <g transform="translate(930, 120)">
+    <rect width="210" height="480" rx="12" fill="url(#cardGrad)" stroke="#10B981" stroke-width="1.5"/>
+    <rect width="210" height="38" rx="12" fill="#059669" fill-opacity="0.2"/>
+    <text x="105" y="24" fill="#34D399" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" text-anchor="middle">4. COPILOT &amp; HITL</text>
+
+    <rect x="15" y="70" width="180" height="55" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="105" y="98" fill="#E2E8F0" font-family="monospace" font-size="11" text-anchor="middle">Spec Q&amp;A Chat</text>
+    <text x="105" y="114" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">Source-Grounded Citations</text>
+
+    <rect x="15" y="145" width="180" height="55" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="105" y="173" fill="#E2E8F0" font-family="monospace" font-size="11" text-anchor="middle">Conflict Detector</text>
+    <text x="105" y="189" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">Width &amp; Protocol Clashes</text>
+
+    <rect x="15" y="220" width="180" height="55" rx="8" fill="#0F172A" stroke="#1E293B"/>
+    <text x="105" y="248" fill="#E2E8F0" font-family="monospace" font-size="11" text-anchor="middle">Contract Editor</text>
+    <text x="105" y="264" fill="#94A3B8" font-family="monospace" font-size="9" text-anchor="middle">Human Point Addition</text>
+
+    <rect x="15" y="295" width="180" height="75" rx="8" fill="#064E3B" stroke="#10B981"/>
+    <text x="105" y="325" fill="#34D399" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Artifact Exporter</text>
+    <text x="105" y="343" fill="#E2E8F0" font-family="monospace" font-size="9" text-anchor="middle">JSON | DOCX | MD | .SV</text>
+  </g>
+</svg>
