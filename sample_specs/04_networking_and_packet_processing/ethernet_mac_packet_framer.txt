@@ -1,0 +1,42 @@
+================================================================================
+SPECIFICATION: 10/100/1000 Mbps Ethernet MAC TX Packet Framer (mac_tx_framer)
+Revision: 1.2 | Standard: IEEE 802.3 Ethernet | Domain: Networking
+================================================================================
+
+1. MODULE OVERVIEW
+Accepts client packet payloads, prepends the standard 7-byte Ethernet Preamble 
+(0x55) and 1-byte Start Frame Delimiter (SFD: 0xD5), calculates and appends the 
+4-byte IEEE 802.3 CRC32 Frame Check Sequence (FCS), and enforces a minimum 
+12-byte Inter-Packet Gap (IPG).
+
+2. PORTS & INTERFACES
+Port Name       | Dir | Width  | Clock  | Polarity | Description
+----------------|-----|--------|--------|----------|-----------------------------------------
+tx_clk          | in  | [0:0]  | tx_clk | edge     | MAC TX clock (125MHz for 1Gbps, 25MHz for 100M)
+reset_n         | in  | [0:0]  | tx_clk | low      | Synchronous active-low reset
+client_tdata    | in  | [7:0]  | tx_clk | high     | Packet payload stream
+client_tvalid   | in  | [0:0]  | tx_clk | high     | Client valid payload
+client_tready   | out | [0:0]  | tx_clk | high     | Ready to accept payload
+client_tlast    | in  | [0:0]  | tx_clk | high     | Packet end indicator
+phy_tdata       | out | [7:0]  | tx_clk | high     | Egress data to PHY / GMII
+phy_tvalid      | out | [0:0]  | tx_clk | high     | PHY data valid
+phy_tlast       | out | [0:0]  | tx_clk | high     | Egress frame completion
+phy_terror      | out | [0:0]  | tx_clk | high     | Client abort / packet underrun
+
+3. PROTOCOL RULES
+- Preamble sequence: 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55.
+- SFD byte: 0xD5.
+- CRC Polynomial: 0x04C11DB7 (Reversed: 0xEDB88320) across Destination, Source, Type/Len, Payload.
+- Minimum Frame Size: If client packet is less than 46 bytes, zero padding must be inserted.
+- Inter-Packet Gap (IPG): Exactly 96 bit times (12 cycles) before accepting next client packet.
+
+4. CORNER CASES
+CC-01: Packet Underrun
+       client_tvalid deasserts mid-packet before client_tlast is received. Framer must assert 
+       phy_terror to force the PHY to drop the frame and abort transmission.
+CC-02: Undersized Runt Packet (Padding Test)
+       Client sends a 10-byte packet with client_tlast asserted. The framer must insert 
+       36 bytes of 0x00 padding prior to emitting the 4-byte CRC32.
+CC-03: Client Backpressure during Preamble
+       Client deasserts client_tvalid during the preamble phase. Hardware must stall internal 
+       pipeline while continuing to complete the standard 8-byte preamble header.
