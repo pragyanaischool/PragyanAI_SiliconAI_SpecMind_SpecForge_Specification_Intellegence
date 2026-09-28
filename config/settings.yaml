@@ -1,0 +1,43 @@
+app:
+  name: "PragyanAI-SpecForge"
+  version: "2.0.0"
+  environment: "production"
+  log_level: "INFO"
+
+models:
+  groq:
+    primary_model: "openai/gpt-oss-120b"
+    fallback_model: "openai/gpt-oss-20b"
+    api_base: "https://api.groq.com/openai/v1"
+    request_timeout: 45
+    max_retries: 3
+  embeddings:
+    provider: "huggingface"
+    model_name: "sentence-transformers/all-MiniLM-L6-v2"
+    device: "cpu"
+    normalize_embeddings: true
+
+rag:
+  chunk_size: 1000
+  chunk_overlap: 150
+  table_detection: true
+  top_k_retrieval: 5
+  chroma_db_dir: "./.chroma_db"
+  collection_name: "pragyan_spec_store"
+
+verification:
+  default_clock_frequency_mhz: 200.0
+  default_reset_polarity: "async_low"
+  sva_assertion_prefix: "ASSERT_PROP_"
+  covergroup_prefix: "CG_"
+
+export:
+  markdown:
+    include_toc: true
+    include_sva_inline: true
+  docx:
+    template_path: null
+    primary_accent_hex: "#00F2FE"
+  systemverilog:
+    indent_spaces: 2
+    timescale: "1ns / 1ps"
