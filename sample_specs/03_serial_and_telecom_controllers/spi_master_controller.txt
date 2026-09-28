@@ -1,0 +1,43 @@
+================================================================================
+SPECIFICATION: Quad-Mode SPI Master Controller (spi_master_top)
+Revision: 3.0 | Protocol: Motorola SPI (CPOL 0/1, CPHA 0/1) | Domain: Serial Bus
+================================================================================
+
+1. MODULE OVERVIEW
+A master-mode SPI controller supporting Motorola SPI modes 0, 1, 2, and 3. 
+Includes an internal clock divider, 8-word TX/RX FIFOs, and 4 dedicated slave 
+chip-select (CS_N) outputs with configurable setup/hold times.
+
+2. PORTS & INTERFACES
+Port Name       | Dir | Width  | Clock  | Polarity | Description
+----------------|-----|--------|--------|----------|-----------------------------------------
+clk             | in  | [0:0]  | clk    | edge     | System core clock (100MHz)
+rst_n           | in  | [0:0]  | clk    | low      | Master asynchronous active-low reset
+sclk            | out | [0:0]  | clk    | edge     | Generated SPI serial clock
+mosi            | out | [0:0]  | clk    | high     | Master Out Slave In serial data
+miso            | in  | [0:0]  | clk    | high     | Master In Slave Out serial data
+cs_n            | out | [3:0]  | clk    | low      | Active-low chip selects for up to 4 slaves
+cfg_cpol        | in  | [0:0]  | clk    | high     | Clock polarity (0 = idle low, 1 = idle high)
+cfg_cpha        | in  | [0:0]  | clk    | high     | Clock phase (0 = sample lead, 1 = sample trail)
+cfg_clk_div     | in  | [7:0]  | clk    | high     | SCLK divisor = clk / (2 * (cfg_clk_div + 1))
+tx_data         | in  | [7:0]  | clk    | high     | Parallel byte to transmit
+tx_valid        | in  | [0:0]  | clk    | high     | Write strobe into TX FIFO
+tx_ready        | out | [0:0]  | clk    | high     | TX FIFO ready for next byte
+rx_data         | out | [7:0]  | clk    | high     | Received byte from RX FIFO
+rx_valid        | out | [0:0]  | clk    | high     | RX FIFO contains valid byte
+rx_ready        | in  | [0:0]  | clk    | high     | Read acknowledge from core
+spi_busy        | out | [0:0]  | clk    | high     | Asserted while shifting bits
+
+3. STATE MACHINE
+- IDLE       : cs_n = 4'b1111, sclk holds CPOL level. Transitions to ASSERT_CS on tx_valid.
+- ASSERT_CS  : Drives target cs_n low. Waits for 1/2 SCLK period for setup.
+- SHIFT_BITS : Shifts 8 data bits on MOSI, samples MISO according to CPOL/CPHA.
+- DEASSERT_CS: Restores cs_n high. Waits hold margin before next transaction.
+
+4. CORNER CASES
+CC-01: CPHA=0 First Bit Drive
+       First MOSI bit must be valid BEFORE the first SCLK edge when CPHA=0.
+CC-02: RX FIFO Overflow
+       Data received while RX FIFO is full must drop new byte and assert an rx_overflow error flag.
+CC-03: Dynamic Divisor Modification
+       Changing cfg_clk_div while spi_busy is high must be ignored until transaction completes.
