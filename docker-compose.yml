@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: specforge-backend
+    command: uvicorn api.server:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/workspace
+      - chroma-data:/workspace/.chroma_db
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - CHROMA_DIR=/workspace/.chroma_db
+    restart: unless-stopped
+
+  frontend:
+    image: node:20-alpine
+    container_name: specforge-frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: specforge-streamlit
+    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/workspace
+      - chroma-data:/workspace/.chroma_db
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    restart: unless-stopped
+
+volumes:
+  chroma-data:
+    driver: local
