@@ -1,0 +1,43 @@
+```text
+================================================================================
+SPECIFICATION: AES-256 GCM Authenticated Encryption/Decryption Core
+Document ID: SEC-AES-GCM-009 | Revision: 3.0 | Target Standard: NIST SP 800-38D
+================================================================================
+
+1. MODULE DESCRIPTION
+Synthesizable hardware engine executing Galois/Counter Mode (GCM) combined with 
+AES-256 symmetric cipher. Performs authenticated payload encryption and generates 
+a 128-bit authentication tag using an integrated GHASH Galois field multiplier GF(2^128).
+
+2. INTERFACES AND SIGNAL DEFINITIONS
+Port Name       | Dir | Width   | Clock | Polarity | Description
+----------------|-----|---------|-------|----------|----------------------------------------
+core_clk        | in  | [0:0]   | cclk  | edge     | Cryptographic clock (250MHz nominal)
+core_rst_n      | in  | [0:0]   | cclk  | low      | Master asynchronous active-low reset
+key_in          | in  | [255:0] | cclk  | high     | 256-bit AES master cipher key
+key_valid       | in  | [0:0]   | cclk  | high     | Strobe indicating new key expansion trigger
+iv_in           | in  | [95:0]  | cclk  | high     | 96-bit Initialization Vector (Nonce)
+enc_dec_mode    | in  | [0:0]   | cclk  | high     | 1 = Encryption mode, 0 = Decryption mode
+payload_data_in | in  | [127:0] | cclk  | high     | Plaintext (enc) or Ciphertext (dec) block
+payload_valid_in| in  | [0:0]   | cclk  | high     | Valid payload block indicator
+payload_ready_out|out | [0:0]   | cclk  | high     | Backpressure ready flag for payload input
+auth_tag_out    | out | [127:0] | cclk  | high     | Generated/expected 128-bit authentication tag
+auth_tag_valid  | out | [0:0]   | cclk  | high     | Tag calculation finished strobe
+tag_mismatch_err| out | [0:0]   | cclk  | high     | In dec mode: asserted if computed tag != auth_tag_in
+
+3. INTERNAL ARCHITECTURE & LATENCY
+- Key Expansion Pipeline: 14 rounds calculated iteratively in 14 clock cycles.
+- Cipher Datapath: 1-round/cycle unrolled architecture. Total encryption latency = 14 cycles/block.
+- Galois Field Multiplier: Karatsuba pipelined GF(2^128) multiplier operating concurrently with AES datapath.
+
+4. CRITICAL CORNER CASES
+CC_AES_01: Key Change Mid-Packet
+           key_valid asserted during active payload stream processing.
+           Engine must raise `protocol_violation_fault` and abort encryption.
+CC_AES_02: Tag Mismatch Side-Channel Defense
+           In decryption mode, plaintext must remain locked behind internal registers 
+           and never asserted onto output pins until the 128-bit authentication tag passes.
+CC_AES_03: Partial Final Block
+           Payload lengths not aligned to 128-bit boundaries. Zero-padding must be 
+           applied before Galois hashing without corrupting the length counter block.
+```
