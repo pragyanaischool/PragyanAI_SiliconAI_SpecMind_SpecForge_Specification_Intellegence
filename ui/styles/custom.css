@@ -1,0 +1,94 @@
+/* Deep Obsidian & Cyan Silicon Workstation Palette */
+:root {
+    --bg-primary: #070B12;
+    --bg-card: #0F172A;
+    --bg-card-hover: #131E35;
+    --border-subtle: #1E293B;
+    --border-active: #00F2FE;
+    --cyan-accent: #00F2FE;
+    --cyan-dim: rgba(0, 242, 254, 0.12);
+    --text-primary: #F8FAFC;
+    --text-muted: #94A3B8;
+}
+
+/* Base application styling */
+.stApp {
+    background-color: var(--bg-primary);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    color: var(--text-primary);
+}
+
+/* Silicon Metric Display Cards */
+.metric-card {
+    background: linear-gradient(145deg, #0F172A 0%, #0B132B 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.metric-card:hover {
+    border-color: var(--border-active);
+    transform: translateY(-2px);
+}
+
+.metric-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.metric-value {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.metric-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    border-radius: 4px;
+    background: var(--cyan-dim);
+    color: var(--cyan-accent);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    margin-top: 6px;
+}
+
+/* Agent Observability Live Pill */
+.agent-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #0B132B;
+    border-left: 3px solid var(--cyan-accent);
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    color: #E2E8F0;
+    border: 1px solid #1E293B;
+}
+
+/* Conflict Alert Banner */
+.conflict-box {
+    background: rgba(239, 68, 68, 0.08);
+    border-left: 3px solid #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    font-size: 0.82rem;
+    color: #FCA5A5;
+}
+
+/* Clean code containers */
+pre, code {
+    font-family: 'JetBrains Mono', monospace !important;
+}
