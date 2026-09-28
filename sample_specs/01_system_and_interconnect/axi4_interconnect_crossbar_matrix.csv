@@ -1,0 +1,24 @@
+Module,axi4_crossbar_4x4
+Parameter,ADDR_WIDTH=32,DATA_WIDTH=64,ID_WIDTH=4
+
+Port Name,Direction,Bit Width,Clock Domain,Active Level,Interface Type,Description
+aclk,input,[0:0],aclk,edge,Clock,Primary Interconnect Crossbar Clock
+aresetn,input,[0:0],aclk,low,Reset,Active-Low Synchronous Reset
+s0_axi_awaddr,input,[31:0],aclk,high,AXI4_S0,Master 0 Write Address
+s0_axi_awvalid,input,[0:0],aclk,high,AXI4_S0,Master 0 Write Address Valid
+s0_axi_awready,output,[0:0],aclk,high,AXI4_S0,Slave 0 Write Address Ready
+s0_axi_wdata,input,[63:0],aclk,high,AXI4_S0,Master 0 Write Data Bus
+s0_axi_wstrb,input,[7:0],aclk,high,AXI4_S0,Master 0 Write Byte Strobes
+s0_axi_wvalid,input,[0:0],aclk,high,AXI4_S0,Master 0 Write Data Valid
+s0_axi_wready,output,[0:0],aclk,high,AXI4_S0,Slave 0 Write Data Ready
+s1_axi_awaddr,input,[31:0],aclk,high,AXI4_S1,Master 1 (DMA) Write Address
+s1_axi_awvalid,input,[0:0],aclk,high,AXI4_S1,Master 1 Write Address Valid
+s1_axi_awready,output,[0:0],aclk,high,AXI4_S1,Slave 1 Write Address Ready
+s1_axi_wdata,input,[63:0],aclk,high,AXI4_S1,Master 1 Write Data Bus
+s1_axi_wvalid,input,[0:0],aclk,high,AXI4_S1,Master 1 Write Data Valid
+s1_axi_wready,output,[0:0],aclk,high,AXI4_S1,Slave 1 Write Data Ready
+m0_axi_awaddr,output,[31:0],aclk,high,AXI4_M0,Target Memory Subsystem Write Address
+m0_axi_awvalid,output,[0:0],aclk,high,AXI4_M0,Target Memory Subsystem Valid
+m0_axi_awready,input,[0:0],aclk,high,AXI4_M0,Target Memory Subsystem Ready
+m0_axi_wdata,output,[63:0],aclk,high,AXI4_M0,Target Memory Subsystem Data Out
+arb_lock_collision,output,[0:0],aclk,high,Diagnostic,Asserted when two masters access same target page simultaneously
