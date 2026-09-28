@@ -1,0 +1,44 @@
+================================================================================
+SPECIFICATION: Asynchronous Dual-Clock CDC FIFO (async_cdc_fifo)
+Revision: 2.1 | Domain: Clock Domain Crossing (CDC) & Meta-Stability
+================================================================================
+
+1. MODULE OVERVIEW
+Bridges two asynchronous, mesochronous, or plesiochronous clock domains (wr_clk 
+and rd_clk). Implements multi-bit Gray code synchronization pointers with 
+dual-rank flip-flops (2-FF) to prevent meta-stability glitches.
+
+2. PARAMETERS
+- DATA_WIDTH : Integer, Default = 16 (Bus width)
+- ADDR_WIDTH : Integer, Default = 4  (FIFO Depth = 2^ADDR_WIDTH = 16)
+
+3. INTERFACES & PORTS
+Port Name       | Dir | Width            | Clock  | Polarity | Description
+----------------|-----|------------------|--------|----------|-----------------------------------------
+wr_clk          | in  | [0:0]            | wr_clk | edge     | Ingestion write clock (e.g. 100MHz)
+wr_rst_n        | in  | [0:0]            | wr_clk | low      | Synchronous reset in write domain
+wr_en           | in  | [0:0]            | wr_clk | high     | Write push strobe
+wr_data         | in  | [DATA_WIDTH-1:0] | wr_clk | high     | Write data payload
+wr_full         | out | [0:0]            | wr_clk | high     | Write domain full flag (no more writes)
+rd_clk          | in  | [0:0]            | rd_clk | edge     | Egress read clock (e.g. 250MHz)
+rd_rst_n        | in  | [0:0]            | rd_clk | low      | Synchronous reset in read domain
+rd_en           | in  | [0:0]            | rd_clk | high     | Read pop strobe
+rd_data         | out | [DATA_WIDTH-1:0] | rd_clk | high     | Read data payload
+rd_empty        | out | [0:0]            | rd_clk | high     | Read domain empty flag (no more reads)
+
+4. CDC CONSTRAINTS & METASTABILITY REQUIREMENTS
+- Synchronizer Type : 2-stage DFF synchronizer on all Gray pointer crossings.
+- Pointer Encoding  : Pure Gray code (only 1 bit changes per increment).
+- Maximum Skew      : Gray-coded bus must be routed with max skew < 1/2 destination clock period.
+- Set False Path    : STA false path constraints applied between wr_ptr_gray and rd_ptr_gray.
+
+5. CORNER CASES
+CC-01: Rapid Write Burst into Empty FIFO
+       wr_clk is 3x faster than rd_clk. rd_empty flag must clear cleanly without 
+       false reads before the dual-rank synchronizer completes.
+CC-02: Rapid Read Drain from Full FIFO
+       rd_clk drains FIFO rapidly while wr_clk is slow. wr_full must deassert safely 
+       without false overflow writes.
+CC-03: Asymmetric Reset Assertion
+       wr_rst_n asserts while rd_rst_n remains high. The read domain must safely detect 
+       empty condition without asserting illegal memory addresses.
