@@ -1,0 +1,51 @@
+{
+  "module_name": "qspi_flash_controller",
+  "bus_standard": "AMBA_APB4",
+  "address_width": 12,
+  "data_width": 32,
+  "clock_frequency_mhz": 133.3,
+  "reset_strategy": "async_low",
+  "registers": [
+    {
+      "name": "QSPI_CTRL",
+      "offset": "0x000",
+      "access": "R/W",
+      "reset_value": "0x00000000",
+      "fields": [
+        {"bits": "[0:0]", "name": "ENABLE", "desc": "Enables QSPI Core Execution"},
+        {"bits": "[1:1]", "name": "QUAD_EN", "desc": "1 = 4-bit Quad IO Mode, 0 = 1-bit Standard SPI"},
+        {"bits": "[3:2]", "name": "CLK_DIV", "desc": "Baud Rate divisor: 00=/2, 01=/4, 10=/8, 11=/16"},
+        {"bits": "[7:4]", "name": "DUMMY_CYCLES", "desc": "Number of dummy cycles inserted between address & data"}
+      ]
+    },
+    {
+      "name": "QSPI_CMD",
+      "offset": "0x004",
+      "access": "R/W",
+      "reset_value": "0x00000003",
+      "fields": [
+        {"bits": "[7:0]", "name": "OPCODE", "desc": "Flash SPI instruction opcode (e.g. 0xEB for Fast Read Quad)"},
+        {"bits": "[8:8]", "name": "HAS_ADDR", "desc": "1 if instruction requires 24/32-bit address field"}
+      ]
+    },
+    {
+      "name": "QSPI_STATUS",
+      "offset": "0x008",
+      "access": "RO",
+      "reset_value": "0x00000000",
+      "fields": [
+        {"bits": "[0:0]", "name": "BUSY", "desc": "1 = Flash transfer in progress, 0 = idle"},
+        {"bits": "[1:1]", "name": "TX_FIFO_FULL", "desc": "TX FIFO cannot accept further write words"},
+        {"bits": "[2:2]", "name": "RX_FIFO_EMPTY", "desc": "RX FIFO contains no valid data"}
+      ]
+    }
+  ],
+  "corner_cases": [
+    {
+      "id": "QSPI_CC_01",
+      "title": "Quad Mode Switch Glitch",
+      "hazard": "Switching QUAD_EN from 0 to 1 during active SPI transmission on IO lines.",
+      "behavior": "Hardware must reject register write and assert APB slave error (pslverr = 1)."
+    }
+  ]
+}
