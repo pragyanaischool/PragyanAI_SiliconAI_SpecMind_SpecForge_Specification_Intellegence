@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from src.2_design_contract.traceability.rtm_matrix import generate_traceability_matrix
+from src.p2_design_contract.traceability.rtm_matrix import generate_traceability_matrix
 
 
 def render_tab_specification():
