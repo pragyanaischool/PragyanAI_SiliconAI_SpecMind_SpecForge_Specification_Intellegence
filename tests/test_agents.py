@@ -1,14 +1,14 @@
 import pytest
 from unittest.mock import MagicMock, patch
-from src.4_engineering_copilot.agents.state import CopilotState
-from src.4_engineering_copilot.agents.contract_synthesizer import run_contract_synthesizer_node
-from src.4_engineering_copilot.agents.router import route_next_action
-from src.4_engineering_copilot.copilot_services.conflict_detector import audit_specification_conflicts
-from src.4_engineering_copilot.copilot_services.hitl_manager import apply_port_override, apply_corner_case_injection
-from src.2_design_contract.models.contract import HardwareSpecificationContract
-from src.2_design_contract.models.ports import PortModel
-from src.2_design_contract.models.timing import TimingModel
-from src.2_design_contract.models.constraints import CornerCaseModel
+from src.p4_engineering_copilot.agents.state import CopilotState
+from src.p4_engineering_copilot.agents.contract_synthesizer import run_contract_synthesizer_node
+from src.p4_engineering_copilot.agents.router import route_next_action
+from src.p4_engineering_copilot.copilot_services.conflict_detector import audit_specification_conflicts
+from src.p4_engineering_copilot.copilot_services.hitl_manager import apply_port_override, apply_corner_case_injection
+from src.p2_design_contract.models.contract import HardwareSpecificationContract
+from src.p2_design_contract.models.ports import PortModel
+from src.p2_design_contract.models.timing import TimingModel
+from src.p2_design_contract.models.constraints import CornerCaseModel
 
 
 def test_contract_synthesizer_node():
