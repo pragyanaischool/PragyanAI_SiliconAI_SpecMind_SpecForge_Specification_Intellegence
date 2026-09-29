@@ -1,4 +1,4 @@
-from src.2_design_contract.models.contract import HardwareSpecificationContract
+from src.p2_design_contract.models.contract import HardwareSpecificationContract
 
 
 def generate_systemverilog_covergroups(contract: HardwareSpecificationContract) -> str:
