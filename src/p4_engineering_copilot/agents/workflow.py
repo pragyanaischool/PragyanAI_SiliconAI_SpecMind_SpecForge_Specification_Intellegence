@@ -1,8 +1,8 @@
 from langgraph.graph import StateGraph, END
-from src.4_engineering_copilot.agents.state import CopilotState
-from src.4_engineering_copilot.agents.spec_analyst_agent import run_spec_analyst_node
-from src.4_engineering_copilot.agents.contract_synthesizer import run_contract_synthesizer_node
-from src.4_engineering_copilot.agents.dv_intelligence_agent import run_dv_intelligence_node
+from src.p4_engineering_copilot.agents.state import CopilotState
+from src.p4_engineering_copilot.agents.spec_analyst_agent import run_spec_analyst_node
+from src.p4_engineering_copilot.agents.contract_synthesizer import run_contract_synthesizer_node
+from src.p4_engineering_copilot.agents.dv_intelligence_agent import run_dv_intelligence_node
 
 
 def compile_copilot_graph(groq_api_key: str):
