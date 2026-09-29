@@ -1,11 +1,11 @@
-from src.2_design_contract.models.contract import HardwareSpecificationContract
-from src.2_design_contract.models.ports import PortModel
-from src.2_design_contract.models.constraints import CornerCaseModel
-from src.2_design_contract.models.fsm import FSMModel
-from src.3_verification_intelligence.sva_generation.sva_builder import generate_sva_bind_file
-from src.3_verification_intelligence.coverage_recommendations.covergroup_suggester import generate_systemverilog_covergroups
-from src.3_verification_intelligence.testcase_generation.test_planner import generate_test_plan
-from src.3_verification_intelligence.boundary_conditions.boundary_tester import extract_boundary_scenarios
+from src.p2_design_contract.models.contract import HardwareSpecificationContract
+from src.p2_design_contract.models.ports import PortModel
+from src.p2_design_contract.models.constraints import CornerCaseModel
+from src.p2_design_contract.models.fsm import FSMModel
+from src.p3_verification_intelligence.sva_generation.sva_builder import generate_sva_bind_file
+from src.p3_verification_intelligence.coverage_recommendations.covergroup_suggester import generate_systemverilog_covergroups
+from src.p3_verification_intelligence.testcase_generation.test_planner import generate_test_plan
+from src.p3_verification_intelligence.boundary_conditions.boundary_tester import extract_boundary_scenarios
 
 
 def test_generate_sva_bind_file_structure():
