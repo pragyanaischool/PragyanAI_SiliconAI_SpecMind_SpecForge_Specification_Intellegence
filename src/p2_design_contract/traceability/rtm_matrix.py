@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import List
-from src.2_design_contract.models.contract import HardwareSpecificationContract
-from src.1_specification_intelligence.req_extraction.requirement_miner import AtomicRequirement
+from src.p2_design_contract.models.contract import HardwareSpecificationContract
+from src.p1_specification_intelligence.req_extraction.requirement_miner import AtomicRequirement
 
 
 def generate_traceability_matrix(
