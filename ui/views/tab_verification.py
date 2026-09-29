@@ -1,6 +1,6 @@
 import streamlit as st
-from src.3_verification_intelligence.sva_generation.sva_builder import generate_sva_bind_file
-from src.3_verification_intelligence.coverage_recommendations.covergroup_suggester import generate_systemverilog_covergroups
+from src.p3_verification_intelligence.sva_generation.sva_builder import generate_sva_bind_file
+from src.p3_verification_intelligence.coverage_recommendations.covergroup_suggester import generate_systemverilog_covergroups
 
 
 def render_tab_verification():
