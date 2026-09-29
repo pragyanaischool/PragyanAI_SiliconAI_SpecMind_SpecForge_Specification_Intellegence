@@ -1,8 +1,8 @@
-from src.4_engineering_copilot.agents.state import CopilotState
-from src.1_specification_intelligence.interface_extraction.interface_miner import extract_interfaces
-from src.1_specification_intelligence.timing_extraction.timing_miner import extract_timing_constraints
-from src.1_specification_intelligence.fsm_extraction.fsm_miner import extract_fsm_structures
-from src.1_specification_intelligence.corner_case_discovery.hazard_analyzer import discover_corner_cases
+from src.p4_engineering_copilot.agents.state import CopilotState
+from src.p1_specification_intelligence.interface_extraction.interface_miner import extract_interfaces
+from src.p1_specification_intelligence.timing_extraction.timing_miner import extract_timing_constraints
+from src.p1_specification_intelligence.fsm_extraction.fsm_miner import extract_fsm_structures
+from src.p1_specification_intelligence.corner_case_discovery.hazard_analyzer import discover_corner_cases
 
 
 def run_spec_analyst_node(state: CopilotState, groq_api_key: str) -> dict:
