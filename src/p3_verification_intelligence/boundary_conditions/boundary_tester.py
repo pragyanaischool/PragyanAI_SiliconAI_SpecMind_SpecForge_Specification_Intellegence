@@ -1,5 +1,5 @@
 from typing import List, Dict
-from src.2_design_contract.models.contract import HardwareSpecificationContract
+from src.p2_design_contract.models.contract import HardwareSpecificationContract
 
 
 def extract_boundary_scenarios(contract: HardwareSpecificationContract) -> List[Dict[str, str]]:
