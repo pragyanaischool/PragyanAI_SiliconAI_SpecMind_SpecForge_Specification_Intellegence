@@ -1,8 +1,8 @@
 import os
 import tempfile
 import pytest
-from src.1_specification_intelligence.doc_understanding.text_normalizer import normalize_spec_text
-from src.1_specification_intelligence.doc_understanding.pdf_table_parser import parse_pdf_with_tables
+from src.p1_specification_intelligence.doc_understanding.text_normalizer import normalize_spec_text
+from src.p1_specification_intelligence.doc_understanding.pdf_table_parser import parse_pdf_with_tables
 from src.rag.chunker import chunk_spec_document
 
 
