@@ -1,7 +1,7 @@
 import streamlit as st
-from src.4_engineering_copilot.agents.workflow import compile_copilot_graph
-from src.4_engineering_copilot.copilot_services.spec_qa import answer_spec_question
-from src.4_engineering_copilot.copilot_services.conflict_detector import audit_specification_conflicts
+from src.p4_engineering_copilot.agents.workflow import compile_copilot_graph
+from src.p4_engineering_copilot.copilot_services.spec_qa import answer_spec_question
+from src.p4_engineering_copilot.copilot_services.conflict_detector import audit_specification_conflicts
 
 
 def render_tab_copilot():
