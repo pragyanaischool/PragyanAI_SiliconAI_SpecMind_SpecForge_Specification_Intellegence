@@ -1,7 +1,7 @@
 import streamlit as st
-from src.2_design_contract.models.ports import PortModel
-from src.2_design_contract.models.constraints import CornerCaseModel
-from src.4_engineering_copilot.copilot_services.hitl_manager import apply_port_override, apply_corner_case_injection
+from src.p2_design_contract.models.ports import PortModel
+from src.p2_design_contract.models.constraints import CornerCaseModel
+from src.p4_engineering_copilot.copilot_services.hitl_manager import apply_port_override, apply_corner_case_injection
 
 
 def render_tab_editor():
