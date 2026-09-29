@@ -1,11 +1,11 @@
 import pytest
 from pydantic import ValidationError
-from src.2_design_contract.models.ports import PortModel
-from src.2_design_contract.models.timing import TimingModel
-from src.2_design_contract.models.fsm import FSMModel, FSMTransitionModel
-from src.2_design_contract.models.constraints import CornerCaseModel
-from src.2_design_contract.models.contract import HardwareSpecificationContract
-from src.2_design_contract.models.protocols import ProtocolModel
+from src.p2_design_contract.models.ports import PortModel
+from src.p2_design_contract.models.timing import TimingModel
+from src.p2_design_contract.models.fsm import FSMModel, FSMTransitionModel
+from src.p2_design_contract.models.constraints import CornerCaseModel
+from src.p2_design_contract.models.contract import HardwareSpecificationContract
+from src.p2_design_contract.models.protocols import ProtocolModel
 
 
 def test_port_model_validation_valid():
