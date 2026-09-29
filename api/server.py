@@ -1,27 +1,26 @@
 import os
 import shutil
 import tempfile
-import asyncio
-from typing import List, Optional, AsyncGenerator
+from typing import List, Optional
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, PlainTextResponse, StreamingResponse
-from pydantic import BaseModel, Field
+from fastapi.responses import JSONResponse, PlainTextResponse
+from pydantic import BaseModel
 
-# Core Platform Engines & Schemas
-from src.2_design_contract.models.contract import HardwareSpecificationContract
-from src.2_design_contract.models.ports import PortModel
-from src.2_design_contract.models.constraints import CornerCaseModel
+# Core Platform Engines & Schemas (Renamed to valid Python identifier packages)
+from src.p2_design_contract.models.contract import HardwareSpecificationContract
+from src.p2_design_contract.models.ports import PortModel
+from src.p2_design_contract.models.constraints import CornerCaseModel
 from src.utils.demo_loader import load_demo_contract
 from src.rag.chunker import chunk_spec_document
 from src.rag.vector_store import build_spec_vectorstore
-from src.1_specification_intelligence.doc_understanding.pdf_table_parser import parse_pdf_with_tables
-from src.1_specification_intelligence.doc_understanding.text_normalizer import normalize_spec_text
-from src.1_specification_intelligence.req_extraction.requirement_miner import extract_requirements
-from src.4_engineering_copilot.agents.workflow import compile_copilot_graph
-from src.4_engineering_copilot.copilot_services.spec_qa import answer_spec_question
-from src.4_engineering_copilot.copilot_services.conflict_detector import audit_specification_conflicts
-from src.4_engineering_copilot.copilot_services.hitl_manager import apply_port_override, apply_corner_case_injection
+from src.p1_specification_intelligence.doc_understanding.pdf_table_parser import parse_pdf_with_tables
+from src.p1_specification_intelligence.doc_understanding.text_normalizer import normalize_spec_text
+from src.p1_specification_intelligence.req_extraction.requirement_miner import extract_requirements
+from src.p4_engineering_copilot.agents.workflow import compile_copilot_graph
+from src.p4_engineering_copilot.copilot_services.spec_qa import answer_spec_question
+from src.p4_engineering_copilot.copilot_services.conflict_detector import audit_specification_conflicts
+from src.p4_engineering_copilot.copilot_services.hitl_manager import apply_port_override, apply_corner_case_injection
 from src.export.mas_doc_generator import generate_mas_markdown
 from src.export.sva_bind_exporter import export_sva_module
 from src.export.rtm_csv_exporter import export_rtm_to_csv
@@ -32,11 +31,18 @@ app = FastAPI(
     description="ASIC Specification Intelligence & Formal Hardware Contract API"
 )
 
+# CORS configuration supporting your live Netlify domain and local dev ports
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://pragyanaisiliconaispecmind.netlify.app")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://pragyanaisiliconaispecmind.netlify.app",
+    allow_origins=[
+        FRONTEND_URL,
+        "https://pragyanaisiliconaispecmind.netlify.app",
         "http://localhost:3000",
-        "http://localhost:8501","*"],
+        "http://localhost:8501",
+        "*"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
