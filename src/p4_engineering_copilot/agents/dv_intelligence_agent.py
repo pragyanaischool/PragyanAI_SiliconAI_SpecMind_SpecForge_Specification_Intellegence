@@ -1,6 +1,6 @@
-from src.4_engineering_copilot.agents.state import CopilotState
-from src.3_verification_intelligence.sva_generation.sva_builder import generate_sva_bind_file
-from src.3_verification_intelligence.testcase_generation.test_planner import generate_test_plan
+from src.p4_engineering_copilot.agents.state import CopilotState
+from src.p3_verification_intelligence.sva_generation.sva_builder import generate_sva_bind_file
+from src.p3_verification_intelligence.testcase_generation.test_planner import generate_test_plan
 
 
 def run_dv_intelligence_node(state: CopilotState) -> dict:
