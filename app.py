@@ -4,9 +4,9 @@ import streamlit as st
 
 from src.utils.session_manager import init_session_state
 from src.utils.demo_loader import load_demo_contract
-from src.1_specification_intelligence.doc_understanding.pdf_table_parser import parse_pdf_with_tables
-from src.1_specification_intelligence.doc_understanding.text_normalizer import normalize_spec_text
-from src.1_specification_intelligence.req_extraction.requirement_miner import extract_requirements
+from src.p1_specification_intelligence.doc_understanding.pdf_table_parser import parse_pdf_with_tables
+from src.p1_specification_intelligence.doc_understanding.text_normalizer import normalize_spec_text
+from src.p1_specification_intelligence.req_extraction.requirement_miner import extract_requirements
 from src.rag.chunker import chunk_spec_document
 from src.rag.vector_store import build_spec_vectorstore
 
